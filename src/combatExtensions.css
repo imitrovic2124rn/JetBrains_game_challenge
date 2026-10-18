@@ -1,0 +1,30 @@
+.weapon-mod-panel { position:fixed;inset:0;z-index:14;display:grid;place-items:center;padding:18px;background:#101a16c9;pointer-events:auto; }
+.weapon-mod-panel[hidden],.onboarding-hint[hidden] { display:none; }
+.mod-terminal { width:min(610px,100%);max-height:calc(100vh - 36px);overflow:auto;padding:24px;color:#d8d2b4;background:linear-gradient(115deg,#354030,#202d24);border:1px solid #a39769;border-top:4px solid #c4a466;box-shadow:0 12px 55px #10171188; }
+.mod-terminal > small { color:#b6b993;font-size:10px;letter-spacing:1.4px; }
+.mod-terminal h2 { display:flex;align-items:center;gap:10px;margin:10px 0;color:#e4cea1;font-size:21px; }
+.mod-terminal h2 svg { width:34px;height:34px;flex-shrink:0; }
+.mod-current { font-size:12px;line-height:1.6;color:#bec4a6; }
+.mod-choices { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:17px 0; }
+.mod-choices button { display:grid;align-content:start;gap:9px;text-align:left;min-height:132px;padding:15px;background:#273628;color:#d6d4ae;border:1px solid #8e9065;cursor:pointer; }
+.mod-choices button:hover { background:#40503a;border-color:#d3bb80; }
+.mod-choices button:disabled { background:#253226;cursor:default;opacity:.58; }
+.mod-choices strong { color:#e8cb91;font-size:14px; }
+.mod-choices span { font-size:12px;line-height:1.5;color:#c2d09b; }
+.mod-choices small { font-size:11px;color:#c4af8f;line-height:1.5; }
+.mod-keep,.tutorial-settings button { padding:8px 12px;background:#253526;color:#e1c68d;border:1px solid #8e9167;cursor:pointer;font-size:12px; }
+.tutorial-settings { display:grid;gap:5px;margin-top:15px;padding-top:12px;border-top:1px solid #90966566; }
+.tutorial-settings small { min-height:1em;font-size:10px;color:#bac79a; }
+.onboarding-hint { position:fixed;z-index:3;left:50%;bottom:24px;transform:translateX(-50%);width:min(380px,calc(100vw - 28px));display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #939468;border-left:3px solid #c7ac6a;background:#263528ed;color:#d6d3ae;pointer-events:auto;box-sizing:border-box; }
+.onboarding-hint strong { color:#e4cd99;font-size:12px;font-weight:600; }
+.onboarding-hint p { margin:5px 0 0;font-size:12px;line-height:1.5; }
+.onboarding-hint button { margin-left:auto;padding:5px 7px;background:#243027;color:#bebf9d;border:1px solid #727d60;cursor:pointer;font-size:10px;flex-shrink:0; }
+.onboarding-hint.in-mod-panel { position:static;transform:none;width:100%;margin-top:12px;box-shadow:none; }
+.weapon-details .active-mod { font-size:9px;color:#c9b78b;text-transform:none;letter-spacing:0;line-height:1.3; }
+.active-mod[hidden],.wheel-mod:empty { display:none; }
+.wheel-slot .wheel-mod { color:#e0bc83;font-size:9px;line-height:1.25; }
+@media(max-width:620px){
+  .mod-terminal{padding:17px;}.mod-choices{grid-template-columns:1fr;gap:8px;}
+  .mod-choices button{min-height:95px;padding:12px;gap:6px;}
+  .onboarding-hint{bottom:16px;padding:10px 12px;}.onboarding-hint p{font-size:11px;}
+}

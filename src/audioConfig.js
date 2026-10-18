@@ -1,0 +1,31 @@
+// Original procedural sound palette and mix. Gameplay values stay in config.js.
+export const AUDIO_SETTINGS = {
+  saveKey: 'ash-relay.audio', saveVersion: 2,
+  defaults: { master: .7, effects: .8, ambience: .32, muted: false },
+  maxVoices: 22, maxLoops: 4, noiseSeconds: 8, variation: .035,
+  spatial: { near: 75, falloff: 180, maximum: 620, pan: .68 },
+  fade: .045, biomeFade: .7, warningDuck: .6,
+  stepDistance: 17.5, scanInterval: 2.8, lowFilterInterval: 12,
+  armoredTypes: ['brute', 'slag', 'charger', 'warden'],
+  // gain, priority, minimum interval: one event is one mixed voice, even a shotgun volley.
+  events: {
+    rifle: [.62,90,.035], shotgun: [.7,92,.1], meleeSwing: [.35,70,.15],
+    launcher:[.6,92,.15],explosion:[.58,85,.08],grenadeThrow:[.28,75,.15],stunBlast:[.45,95,.12],
+    batSwing:[.35,70,.15],batHeavyImpact:[.4,72,.12],batWood:[.3,55,.06],batMetal:[.29,55,.06],pickupGrenade:[.34,78,.12],
+    impactFlesh: [.42,42,.045], impactArmor: [.38,45,.06], impactSolid: [.32,35,.065],
+    hunterHit: [.33,94,.08],
+    reloadStart: [.4,80,.12], reloadEnd: [.45,82,.12], empty: [.4,75,0],
+    enemyRifle: [.4,60,.09], enemyAcid: [.42,62,.12], enemyEmber: [.45,62,.12],
+    rangedWarning: [.43,96,.18], acidWarning: [.42,96,.18], chargeWarning: [.55,98,.2],
+    hazardWarning: [.42,98,.2], hazardImpact: [.5,65,.1],
+    playerDamage: [.58,100,.32], playerArmor: [.5,100,.28], enemyDeath: [.27,26,.1],
+    stepDust: [.2,15,.13], stepCinder: [.18,15,.13], stepToxic: [.18,15,.13], stepMarsh: [.2,15,.13],
+    pickupHealth: [.4,78,.12], pickupArmor: [.4,78,.12], pickupAmmo: [.38,78,.12],
+    pickupFilter: [.4,78,.12], pickupUpgrade: [.4,78,.12], red3: [.55,100,.5],
+    filter: [.38,82,.2], hunter: [.4,82,.2], overload: [.48,90,.2], scan: [.14,18,1],
+    warning: [.55,100,.5], mutation: [.4,90,.4], plant: [.4,85,.4],
+    airdropArrival: [.38,76,1], airdropLand: [.45,55,.5],
+    wave: [.35,80,1], achievement: [.38,85,.7], objective: [.38,80,.7],
+    victory: [.5,100,1], defeat: [.46,100,1], marshDrip: [.12,5,.8],
+  },
+};

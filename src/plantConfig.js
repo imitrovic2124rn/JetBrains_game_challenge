@@ -1,0 +1,25 @@
+// One local world decision: no fluid simulation or permanent world save state.
+export const PLANT_SETTINGS = {
+  interactionRadius: 48,
+  interactionOffset: [0, -62],
+  footprintClearance: 91,
+  placementAttempts: 192,
+  roadOffset: 132,
+  searchStep: 118,
+  safeRadius: 210,
+  concentratedRate: 2,
+  concentratedRadius: 58,
+  concentratedLimit: 4,
+  // Green pools use the existing chemical-spill damage and Hazards.puddleTick.
+  expansionRate: 1,
+  expansionRadius: 58,
+  expansionMaximumLength: 560,
+  boundaryProbeStep: 24,
+  supplyCount: 6,
+  supplyScatterRadius: 34,
+  supplyScatterAttempts: 12,
+  pickupDelay: 0.3,
+  warningPulseSpeed: 2,
+  colors: { idle: 0xcfad66, purify: 0x9acbaf, overload: 0xda8561,
+    concentrated: 0xaabd60, expanded: 0xb8ab58 },
+};

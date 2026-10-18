@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="theme-color" content="#30372c" />
+    <link rel="icon" type="image/svg+xml" href="/relay-mark.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Ash Relay — The Last Signal</title>
+  </head>
+  <body class="game-in-menu hud-compact">
+   <canvas class="game" tabindex="0" aria-label="Wasteland gameplay. Aim with mouse, attack with left mouse or Space."></canvas>
+    <div class="mask-vignette" aria-hidden="true"></div>
+    <div class="ui-layer">
+    <div class="hud">
+      <div class="hud-heading"><span class="relay-brand">ASH RELAY</span><span class="terminal-status">SURVIVOR</span></div>
+      <div class="terminal-line">Status <span>● ACTIVE</span></div>
+      <div class="stat"><span>Health</span><strong data-hud="health">100 / 100</strong></div>
+      <div class="bar"><div class="health-fill" data-hud="health-fill"></div></div>
+      <div class="stat"><span>Armor</span><strong data-hud="armor">0 / 100</strong></div>
+      <div class="bar"><div class="armor-fill" data-hud="armor-fill"></div></div>
+      <section class="mask-console" aria-label="Respirator systems">
+        <div class="mask-console-heading"><span>RESPIRATOR / <b data-mask="mode">FILTER</b></span><strong data-mask="state">SEALED</strong></div>
+        <div class="mask-mode-controls" aria-label="Mask mode">
+          <button type="button" data-mode="filter" aria-pressed="true"><kbd>1</kbd> FILTER</button>
+          <button type="button" data-mode="hunter" aria-pressed="false"><kbd>2</kbd> HUNTER</button>
+          <button type="button" data-mode="overload" aria-pressed="false"><kbd>3</kbd> OVERLOAD</button>
+        </div>
+        <div class="mask-readings"><label>Filter <strong data-mask="filter">100 / 100</strong><span class="mask-meter"><i data-mask="filter-fill"></i></span></label>
+          <label>Contamination <strong data-mask="contamination">0 / 100</strong><span class="mask-meter contamination-meter"><i data-mask="contamination-fill"></i><b style="left:25%"></b><b style="left:50%"></b><b style="left:75%"></b></span></label></div>
+        <div class="mask-activity"><span data-mask="activity">Clean air</span><strong data-mask="overload">NEEDS 25 CONTAM.</strong></div>
+        <button class="mutations-button" type="button" aria-controls="mutation-inspect" aria-expanded="false">Mutations <kbd>M</kbd><span data-mask="mutations">0 / 3</span></button>
+      </section>
+      <div class="status-warning">Effects <strong data-hud="status">Clear</strong></div>
+      <div class="active-weapon">
+        <b data-hud="weapon-icon" aria-hidden="true"></b>
+        <div class="weapon-details"><small data-hud="weapon-category">Melee</small><strong data-hud="weapon">Relay Breaker</strong><span class="weapon-ammunition" data-hud="ammo" hidden></span></div>
+        <div class="weapon-tools">
+          <span class="wheel-affordance" title="Hold Tab to choose a weapon">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13"/><circle cx="16" cy="16" r="4"/><path d="M16 3v9m0 8v9M3 16h9m8 0h9"/></svg>
+            <small>Hold <kbd>Tab</kbd></small>
+          </span>
+          <span class="stun-count" title="Stun grenades — G">
+            <span class="stun-icon"><svg viewBox="0 0 28 32" aria-hidden="true"><path d="M8 10h12l2 4v13l-3 3H9l-3-3V14Zm2 0V6h8v4M8 16h12M8 22h12M12 12v16M17 12v16M15 6V3h8l2 18"/><circle cx="7" cy="5" r="3"/></svg><kbd>G</kbd></span>
+            <strong data-hud="grenades" aria-label="2 stun grenades">2</strong>
+          </span>
+        </div>
+      </div>
+      <div class="weapon-reload" hidden><span data-hud="reload-label">Reloading…</span><progress data-hud="reload-progress" max="1" value="0" aria-label="Reload progress"></progress></div>
+      <div class="hud-details">
+        <span class="wave-value">Wave <strong data-hud="wave">1</strong></span>
+        <span>Remaining <strong data-hud="remaining">0</strong></span>
+        <span class="wide wave-status" data-hud="wave-status">Wave in progress</span>
+        <span>Damage <strong data-hud="damage">+0%</strong></span>
+        <span>Speed <strong data-hud="speed">+0%</strong></span>
+        <span class="wide overdrive-status">Overdrive <strong data-hud="overdrive">Inactive</strong></span>
+        <span class="wide">Airdrops <strong data-hud="airdrop">0/2 · 75s</strong></span>
+        <span class="score">Score <strong data-hud="score">0</strong></span>
+        <span>Stage <strong data-hud="stage">1</strong></span>
+        <span>Enemies <strong data-hud="enemies">0 / 12</strong></span>
+        <span class="wide">Still Human <strong data-hud="still-human" title="Extract without ever reaching 25 contamination.">Eligible</strong></span>
+      </div>
+      <div class="controls"><kbd>WASD / ↑↓←→</kbd> MOVE <span>MOUSE AIM</span></div>
+      <div class="controls secondary-controls"><span><kbd>SHIFT</kbd> DASH</span><span><kbd>E</kbd> INTERACT</span></div>
+      <div class="hud-actions"><button class="achievements-button" type="button" aria-controls="achievements-panel" aria-expanded="false">Achievements <kbd>J</kbd><span>0/21</span></button><small><kbd>LMB / SPACE</kbd> ATTACK</small></div>
+      <label class="graphics-control">Visual quality <select class="graphics-quality" aria-label="Visual quality"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></label>
+      <label class="minimap-control graphics-control">Minimap size <select class="minimap-size graphics-quality-select" aria-label="Minimap size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option></select></label>
+      <label class="hunter-vignette-control graphics-control">Hunter vignette <select class="hunter-vignette graphics-quality-select" aria-label="Hunter vignette"><option value="reduced">Reduced</option><option value="standard">Standard</option><option value="strong" selected>Strong</option></select></label>
+      <fieldset class="audio-settings"><legend>Sound</legend>
+        <label>Master <input type="range" min="0" max="100" step="1" data-audio-volume="master" aria-label="Master volume"><output data-audio-value="master"></output></label>
+        <label>Effects <input type="range" min="0" max="100" step="1" data-audio-volume="effects" aria-label="Effects volume"><output data-audio-value="effects"></output></label>
+        <label>Ambience <input type="range" min="0" max="100" step="1" data-audio-volume="ambience" aria-label="Ambience volume"><output data-audio-value="ambience"></output></label>
+        <div class="audio-settings-footer"><button class="sound-toggle" type="button" aria-pressed="false">Mute</button><small class="audio-status" role="status">Sound starts when you play.</small></div>
+      </fieldset>
+    </div>
+    <aside class="minimap" aria-label="Exploration map. Arrow: player; amber diamond: active airdrop; square: discovered landmark.">
+      <div class="minimap-heading"><span>Map</span><b>N ↑</b></div>
+      <canvas width="352" height="352" aria-label="Discovered terrain, player, landmarks, airdrops and expedition sites" title="R: radio relay · P: power cell · T: transmitter · A: antenna convoy"></canvas>
+      <strong class="minimap-location">Dustlands</strong>
+      <div class="minimap-caption"><span class="minimap-coverage">0% explored</span><span><b>◆</b> Airdrop</span></div>
+    </aside>
+    <div class="sector-label"><span>Dustlands</span><small>Three components. One last signal.</small></div>
+    <div class="pickup-message" role="status" hidden></div>
+    <div class="biome-banner" role="status" hidden><span>Now entering</span><strong></strong><small></small></div>
+    <div class="airdrop-indicators" aria-hidden="true"></div>
+    <div class="supply-status" role="status" hidden></div>
+    <div class="wave-notice" role="status" hidden><strong></strong><small></small></div>
+    <div class="pause-notice" role="status" hidden>Game paused <small>Return to the game to continue</small></div>
+    <div class="achievement-toast" role="status" hidden><span class="unlock-icon"></span><div><small>Achievement unlocked</small><strong></strong></div></div>
+    <div class="plant-prompt" role="status" hidden><span class="plant-prompt-icon">♧</span><div><strong>THE LUNG</strong><small>Damaged purification plant</small></div><span><kbd>E</kbd> DECIDE</span></div>
+    <div class="mutation-choice-panel mechanic-panel" hidden>
+      <section class="mechanic-dialog" role="dialog" aria-modal="true" aria-labelledby="mutation-choice-title" aria-describedby="mutation-choice-note">
+        <header><span class="debrief-code">Mutation unlocked</span><h2 id="mutation-choice-title">The body remembers</h2><p id="mutation-choice-note">Choose one mutation for this run.</p></header>
+        <div class="mutation-choices"></div>
+        <footer>Choose carefully <span data-mutation="threshold"></span></footer>
+      </section>
+    </div>
+    <div class="mutation-inspect mechanic-panel" id="mutation-inspect" hidden>
+      <section class="mechanic-dialog" role="dialog" aria-modal="true" aria-labelledby="mutation-inspect-title">
+        <header class="mechanic-header"><div><span class="debrief-code">Your survivor</span><h2 id="mutation-inspect-title">Mutations</h2><p>You keep these mutations until the run ends.</p></div><button class="mechanic-close" type="button">Close <kbd>ESC</kbd></button></header>
+        <div class="mutation-records"></div>
+        <details class="hunter-field-notes"><summary>Hunter tips</summary><p>Amber outlines and diamonds mark an opening: hit for 20% extra damage. An amber crosshair and a short chime confirm the bonus.</p><ul><li><strong>Shield Raider:</strong> attack from the sides or rear.</li><li><strong>Ranged enemies:</strong> strike after they fire.</li><li><strong>Charging enemies:</strong> strike just after a charge or lunge.</li><li><strong>The Warden:</strong> strike while its reactor is exposed.</li><li><strong>Other enemies:</strong> watch for a brief opening as they catch their breath.</li></ul></details>
+        <footer>FIRST EXPOSURE THRESHOLDS: 25 / 50 / 75 <span data-mutation="dash"></span></footer>
+      </section>
+    </div>
+    <div class="plant-decision-panel mechanic-panel" hidden>
+      <section class="mechanic-dialog" role="dialog" aria-modal="true" aria-labelledby="plant-decision-title">
+        <header class="mechanic-header"><div><span class="debrief-code">Toxic Basin</span><h2 id="plant-decision-title">The Lung</h2><p>Clear the air or break open the supply stores.</p></div><button class="mechanic-close" type="button">Leave <kbd>ESC</kbd></button></header>
+        <div class="plant-decision-intro">This choice lasts for the rest of your run.</div>
+        <div class="plant-choices">
+          <button class="mutation-card plant-purify" type="button" data-choice="purify"><span class="mutation-card-icon" aria-hidden="true">♧</span><span class="mutation-card-title">Purify</span><span class="mutation-benefit">Clear the air around the plant and receive a filter cartridge.</span><span class="mutation-cost">No supply cache. Enemies can still hurt you.</span><span class="mutation-card-select">Restore the pumps →</span></button>
+          <button class="mutation-card plant-overload" type="button" data-choice="overload"><span class="mutation-card-icon" aria-hidden="true">ϟ</span><span class="mutation-card-title">Overload the plant</span><span class="mutation-benefit">Release a valuable supply cache.</span><span class="mutation-cost">Spread contamination toward the nearby border.</span><span class="mutation-card-select">Vent the pressure →</span></button>
+        </div><footer>This decision cannot be undone.</footer>
+      </section>
+    </div>
+    <div class="achievements-panel" id="achievements-panel" hidden>
+      <section class="achievement-dialog" role="dialog" aria-modal="true" aria-labelledby="achievement-title" aria-describedby="achievement-pause-note">
+        <header><div><span class="debrief-code">Ash Relay</span><h2 id="achievement-title">Achievements</h2><p class="achievement-summary"></p></div><button class="achievement-close" type="button" aria-label="Close achievements">Close <kbd>ESC</kbd></button></header>
+        <p class="achievement-pause-note" id="achievement-pause-note">Game paused</p>
+        <div class="achievement-list"></div>
+        <footer class="achievement-save-note"></footer>
+      </section>
+    </div>
+    <div class="game-over" hidden>
+      <div class="debrief">
+        <span class="debrief-code">ASH RELAY / VITAL LINK LOST</span>
+        <h1>Game Over</h1>
+        <p>Your transmission ends in the outer works.</p>
+        <div class="restart-prompt"><kbd>SPACE</kbd> BEGIN A NEW RUN</div>
+        <button class="defeat-menu" type="button">Return to Main Menu</button>
+      </div>
+    </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
