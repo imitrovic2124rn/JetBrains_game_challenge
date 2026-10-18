@@ -158,7 +158,7 @@ export default class Map extends THREE.Group {
     this.grid.query(object.position.x, object.position.y, radius + CONFIG.world.placementGap, this.nearby);
     // Placement uses footprints too; the broad circle is only a spatial-query envelope.
     if (!canMove(object, object.position.x, object.position.y, this.nearby)) return false;
-    this.solids.push(object); this.grid.insert(object); this.colliderDirty = true;
+    this.solids.push(object); this.grid.insert(object);
     if (tall) {
       prepareOcclusion(object); object.userData.height = new THREE.Box3().setFromObject(object).max.z;
       this.tallObjects.push(object); this.chunkAt(object.position.x, object.position.y).add(object);
@@ -170,7 +170,7 @@ export default class Map extends THREE.Group {
     if(Math.hypot(object.position.x,object.position.y)<CONFIG.world.safeRadius+object.collisionRadius)return false;
     this.grid.query(object.position.x,object.position.y,object.collisionRadius+CONFIG.world.placementGap,this.nearby);
     if(!canMove(object,object.position.x,object.position.y,this.nearby))return false;
-    this.solids.push(object);this.grid.insert(object);this.add(object);this.colliderDirty=true;
+    this.solids.push(object);this.grid.insert(object);this.add(object);
     return true;
   }
   inPath(x, y, radius = 0) {
@@ -188,7 +188,7 @@ export default class Map extends THREE.Group {
     }
     this.solids = this.solids.filter(object => !removing.has(object));
     this.tallObjects = this.tallObjects.filter(object => !removing.has(object));
-    this.grid.clear(); for (const object of this.solids) this.grid.insert(object); this.colliderDirty = true;
+    this.grid.clear(); for (const object of this.solids) this.grid.insert(object);
     this.invalidateNavigation();
   }
   invalidateNavigation() {
@@ -408,7 +408,6 @@ export default class Map extends THREE.Group {
       }
       for(const detail of this.optionalDetails)detail.visible=detail.userData.center.distanceToSquared(position)<this.graphics.detailDistance**2;
     }
-    if (this.colliderPlayer) { this.colliderPlayer.position.set(position.x, position.y, 1.5); }
   }
   updateOcclusion(camera, player) {
     this.updateVisibility(player.position); camera.getWorldPosition(this.cameraPosition);
@@ -433,33 +432,5 @@ export default class Map extends THREE.Group {
       for (const material of previous.userData.occlusionMaterials) { material.opacity = 1; material.depthWrite = true; }
     }
     const previous = this.faded; this.faded = this.nextFaded; this.nextFaded = previous;
-  }
-  toggleColliderOverlay(player) { this.setColliderOverlay(!this.colliderOverlay?.visible, player); }
-  setColliderOverlay(visible, player) {
-    if (!import.meta.env.DEV) return;
-    if (this.colliderDirty && this.colliderOverlay) {
-      const materials = new Set();
-      this.colliderOverlay.traverse(line => { if (line.isLine) { line.geometry.dispose(); materials.add(line.material); } });
-      for (const material of materials) material.dispose();
-      this.colliderOverlay.removeFromParent(); this.colliderOverlay = this.colliderPlayer = null;
-    }
-    if (!this.colliderOverlay && visible) {
-      this.colliderOverlay = new THREE.Group(); this.colliderOverlay.name = 'Development collider overlay';
-      const material = new THREE.LineBasicMaterial({ color: 0x52f6e4, depthTest: false, transparent: true, opacity: 0.8 });
-      for (const object of this.solids) for (const shape of object.userData.collisionShapes || []) {
-        const points = [];
-        if (shape.type === 'circle') {
-          for (let i = 0; i <= 24; i++) points.push(new THREE.Vector3(Math.cos(i / 24 * Math.PI * 2) * shape.radius, Math.sin(i / 24 * Math.PI * 2) * shape.radius, 1.1));
-        } else for (const [x, y] of [[-shape.hx,-shape.hy],[shape.hx,-shape.hy],[shape.hx,shape.hy],[-shape.hx,shape.hy],[-shape.hx,-shape.hy]]) points.push(new THREE.Vector3(x, y, 1.1));
-        const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), material);
-        line.position.set(shape.x, shape.y, 0); line.rotation.z = shape.angle || 0; line.renderOrder = 20; this.colliderOverlay.add(line);
-      }
-      const ring = [];
-      for (let i = 0; i <= 32; i++) ring.push(new THREE.Vector3(Math.cos(i / 32 * Math.PI * 2) * player.collisionRadius, Math.sin(i / 32 * Math.PI * 2) * player.collisionRadius, 0));
-      this.colliderPlayer = new THREE.Line(new THREE.BufferGeometry().setFromPoints(ring), new THREE.LineBasicMaterial({ color: 0xffd16d, depthTest: false }));
-      this.colliderPlayer.renderOrder = 21; this.colliderOverlay.add(this.colliderPlayer); this.add(this.colliderOverlay);
-      this.colliderDirty = false;
-    }
-    if (this.colliderOverlay) this.colliderOverlay.visible = visible;
   }
 }

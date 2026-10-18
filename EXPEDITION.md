@@ -24,4 +24,4 @@ Achievement save version 2 explicitly reads and migrates version 1, retaining co
 
 ## Manual checks
 
-Visit each site, cancel confirmations, try success/failure/retry, and inspect collider alignment with development-only F3. Observe Warden windups, all health phases, wall-stopped charges and leash resets. Check ordered controls and both Lung decisions in separate runs. Signal once, pause during defense, protect the tower, leave/re-enter extraction and verify victory, tower/player defeat, Endless and restart. A full naturally paced run is needed to judge the 20–30 minute target and encounter balance; console timer shortcuts cannot establish that pacing.
+Visit each site, cancel confirmations, try success/failure/retry, and inspect movement around scenery. Observe Warden windups, all health phases, wall-stopped charges and leash resets. Check ordered controls and both Lung decisions in separate runs. Signal once, pause during defense, protect the tower, leave/re-enter extraction and verify victory, tower/player defeat, Endless and restart. A full naturally paced run is needed to judge the 20–30 minute target and encounter balance.

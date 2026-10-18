@@ -110,7 +110,7 @@ export const CONFIG = {
     red3GuaranteeAfter: 10, rewardWeights: { supplies: 0.54, weapon: 0.38, red3: 0.08 } },
   scorePerSecond: 0.1,
   world: { tileSize: 30, occlusionOpacity: 0.22, boundaryInset: 10, collisionGap: 0.08,
-    debugColliders: false, ...WORLD_SETTINGS },
+    ...WORLD_SETTINGS },
 };
 
 export function getDifficulty(score, wave = 1, result = {}) {

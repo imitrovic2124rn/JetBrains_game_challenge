@@ -56,11 +56,8 @@ const graphics=new GraphicsQuality(renderer,map,light);
 const aim = new Aiming(scene, renderer.domElement);
 const pauseReasons = new Set();
 const audio = new MaskAudio();
-const debugRun=import.meta.env.DEV && new URLSearchParams(window.location.search).get('debug')==='1';
-let developmentPanel=null;
 let attackRequested = false, heavyRequested=false, spaceHeld = false, mouseHeld = false, discoveredBiome = null, menus, wheel;
-const achievements = new Achievements({ readOnly:debugRun, onPanelChange: open => { setPause('archive', open); menus?.archiveChanged(open); } });
-hud.achievements=achievements;
+const achievements = new Achievements({ onPanelChange: open => { setPause('archive', open); menus?.archiveChanged(open); } });
 const pickups = new PowerUps(scene, type => { if (type === 'red3') achievements.recordRed3(); }, attack);
 const biomes = new Biomes(scene, light, hud), projectiles = new Projectiles(scene,()=>graphics.settings), hazards = new Hazards(scene);
 const airdrops = new Airdrops(scene, pickups, attack, hud, () => { run.airdropsOpened++; }, () => achievements.recordAirdrop());
@@ -106,7 +103,7 @@ wheel = new WeaponWheel(attack, {
   onOpen: () => { releaseAttackInput(); aim.freeze(); },
   onClose: () => { releaseAttackInput(); aim.resume(); },
 });
-const onboarding=new Onboarding({graphics,readOnly:debugRun,onInteract:releaseAttackInput,
+const onboarding=new Onboarding({graphics,onInteract:releaseAttackInput,
   onDismiss:()=>{if(gameplayInput())renderer.domElement.focus({preventScroll:true});}});
 const weaponMods=new WeaponMods({attack,pickups,setPause,
   canPresent:()=>gameplayInput()&&!player.stats.stunned&&!wheel.opened&&!mechanicUI.reason&&!mission.ui.open&&!achievements.isOpen&&!menus.isOpen,
@@ -139,23 +136,6 @@ player.stats.onElectricalStun=()=>{
 hud.onAnnouncement=kind=>audio.play(kind);
 achievements.onNotify=()=>audio.play('achievement',null,{ui:true});
 document.querySelector('.defeat-menu').addEventListener('click', returnToMain);
-if(import.meta.env.DEV && debugRun) {
-  import('./debug/DevelopmentPanel.js').then(({default:DevelopmentPanel})=>{
-    developmentPanel=new DevelopmentPanel({player,map,pickups,clearInput,combat:{scene,grid,projectiles,hazards,onSound:worldSound},canUse:()=>run.state==='playing'&&!pauseReasons.size,
-      extraction:{attack,mission,run,waves,restart,hud,
-        canPreview:()=>achievements.readOnly&&menus.ready&&!['loading','error'].includes(run.state),
-        clearEnemies:()=>{for(const enemy of enemies)retireEnemy(enemy);removeDead();refreshGrid();},
-        onPrepared:()=>{
-          clearInput();aim.reset();player.updateVisual();biomes.reset(player.position);discoveredBiome=biomes.current.id;
-          map.navigation.target=-1;map.navigation.update(player.position,player.collisionRadius);
-          camera.updateMatrixWorld(true);updateHud(0);mission.ui.update(mission,player);
-          mechanicUI.update(0,player.stats,lung,player);
-          minimap.update(CONFIG.ui.minimapInterval,player,biomes.current,airdrops);map.updateOcclusion(camera,player);
-          renderer.domElement.focus({preventScroll:true});
-        },
-      }});
-  });
-}
 
 function releaseAttackInput() { attackRequested = heavyRequested = spaceHeld = mouseHeld = false; }
 function clearInput() { wheel?.cancel(); player.clearInput(); releaseAttackInput(); }
@@ -191,7 +171,6 @@ function maskEvents() {
 function refreshGrid() {
   grid.clear();
   for (const enemy of enemies) if (!enemy.dead) grid.insert(enemy);
-  developmentPanel?.insertTargets(grid);
 }
 function spawnEnemy(initial = false, options = {}) {
   let active=0;for(const enemy of enemies)if(!enemy.dead)active++;
@@ -273,7 +252,6 @@ function returnToMain() {
   enemies.length = 0; grid.clear(); clearInput();
   mechanicUI.reset(); achievements.resetRun(); maskEffects.reset();
   projectiles.reset(); hazards.reset(); pickups.reset(); airdrops.reset();
-  developmentPanel?.reset();
   player.reset(); player.visible = false; attack.reset(); aim.reset(); lung.reset(); hud.reset();
   waves.reset(); supplies.reset(); run.attracted = run.attractionTime = 0;
   run.survival = run.score = run.kills = run.killCount = run.airdropsOpened = 0;
@@ -291,7 +269,6 @@ function restart() {
   for (const enemy of enemies) enemy.dispose();
   enemies.length = 0; grid.clear(); clearInput(); pauseReasons.clear(); achievements.resetRun();
   pickups.reset(); player.reset(); attack.reset(); aim.reset(); hud.reset(); waves.reset(); supplies.reset();
-  developmentPanel?.reset();
   projectiles.reset(); hazards.reset(); airdrops.reset(); minimap.resetRun();
   mechanicUI.reset(); maskEffects.reset(); lung.reset(true); run.attracted = run.attractionTime = 0;
   run.seed=newRunSeed(run.seed);
@@ -310,7 +287,6 @@ function restart() {
   map.navigation.target = -1;
   map.navigation.update(player.position,player.collisionRadius);
   aim.update(player,camera,true,0);environment.update(0,camera);supplies.update(0,player);
-  if (import.meta.env.DEV && (CONFIG.world.debugColliders || map.colliderOverlay?.visible)) map.setColliderOverlay(true, player);
   for (let i = 0; i < Math.min(CONFIG.difficulty.initialEnemies, waves.quota); i++) if (spawnEnemy(true)) waves.recordSpawn();
   hud.announce('Wave 1', `${waves.quota} enemies`, 'wave');
   hud.message('Nearby supplies marked on the map.');mission.ui.update(mission,player);
@@ -345,7 +321,6 @@ window.addEventListener('keydown', event => {
     return;
   }
   audio.unlock();
-  if (import.meta.env.DEV && event.code === 'F3' && map.isReady) { event.preventDefault(); map.toggleColliderOverlay(player); return; }
   if ((event.code === 'Escape' || event.code === 'KeyP') && run.state === 'playing') { event.preventDefault(); menus.pause(); return; }
   if (run.state === 'game-over') { if (event.code === 'Space') restart(); return; }
   if (!gameplayInput()) return;
@@ -414,20 +389,18 @@ function updateGame(dt) {
   player.speedMultiplier = player.stats.movementFactor*player.combatMovementFactor;
   player.updateVisual(); atmosphere.update(dt, player.position);
   if (player.stats.health <= 0) { gameOver(); return; }
-  developmentPanel?.simulate(dt,camera);
   refreshGrid(); grid.query(player.position.x, player.position.y, player.collisionRadius + Math.max(CONFIG.player.jumpDistance,player.dash ? CONFIG.contamination.dash.distance : 0) + 2, nearby);
   aim.update(player, camera, true, dt);
   player.update(player.stats.stunned?dt:player.stats.controlTime, nearby, contact, map); biomes.update(dt, player.position);
   audio.update(dt,player,camera,biomes.current.id);
   aim.update(player, camera, true);
-  const combatTargets = developmentPanel?.getCombatTargets(enemies) ?? enemies;
-  attack.update(dt, combatTargets, onEnemyDeath, projectiles, map);
+  attack.update(dt, enemies, onEnemyDeath, projectiles, map);
   if(!wheel.opened&&heavyRequested){
     heavyRequested=false;attackRequested=false;
-    attack.trigger(combatTargets,onEnemyDeath,projectiles,map,aim,true,'heavy');
+    attack.trigger(enemies,onEnemyDeath,projectiles,map,aim,true,'heavy');
   }else if (!wheel.opened && (attackRequested || spaceHeld || mouseHeld)) {
     const freshPress = attackRequested; attackRequested = false;
-    attack.trigger(combatTargets, onEnemyDeath, projectiles, map, aim, freshPress);
+    attack.trigger(enemies, onEnemyDeath, projectiles, map, aim, freshPress);
   }
   removeDead(); refreshGrid();
   if (biomes.announced.id !== discoveredBiome) { discoveredBiome = biomes.announced.id; achievements.discoverBiome(discoveredBiome); }
@@ -487,14 +460,9 @@ renderer.setAnimationLoop(() => {
     mechanicUI.update(0,player.stats,lung,player);
   }
   wheel.update();
-  developmentPanel?.update();
   aim.render(camera,run.state==='playing'&&!pauseReasons.size?dt:0);
   projectiles.prediction.update(aim.marker.visible,attack,aim,player,map,grid);
   projectiles.combatEffects.render(camera);
   onboarding.render(run.state==='playing'&&!pauseReasons.size&&!wheel.opened);
   renderer.render(scene, camera);
 });
-
-export { player, enemies, pickups, map, run, restart, attack, projectiles, airdrops, biomes, camera,
-  hazards, waves, achievements, minimap, supplies, pauseReasons, setPause, lung, mechanicUI, maskEffects, switchMask, graphics,mission,
-  menus, aim, wheel, returnToMain, audio,environment,weaponMods,onboarding };

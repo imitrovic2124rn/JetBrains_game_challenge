@@ -20,7 +20,7 @@ export default class WeaponMods {
   }
   get open(){return !!this.current;}
   dropEnemy(enemy){
-    if(enemy.debugSubject||enemy.debugTarget||!enemy.dead||!enemy.deathProcessed||enemy.modDropRolled)return null;
+    if(!enemy.dead||!enemy.deathProcessed||enemy.modDropRolled)return null;
     enemy.modDropRolled=true;
     if(Math.random()>=CONFIG.combat.mods.dropChance)return null;
     const weapons=CONFIG.weaponWheel.order.filter(id=>this.attack.owns(id)&&!this.waiting.has(id)

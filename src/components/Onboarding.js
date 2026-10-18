@@ -1,8 +1,8 @@
 import { CONFIG } from '../config.js';
 
 export default class Onboarding {
-  constructor({graphics,readOnly=false,onInteract,onDismiss}){
-    Object.assign(this,{graphics,readOnly,onInteract,onDismiss});this.completed=new Set(graphics.tutorialHints);
+  constructor({graphics,onInteract,onDismiss}){
+    Object.assign(this,{graphics,onInteract,onDismiss});this.completed=new Set(graphics.tutorialHints);
     this.queue=[];this.current=null;this.poll=this.visibleTime=this.exposedFor=0;this.modal=false;this.worldVisible=false;
     this.root=document.createElement('aside');this.root.className='onboarding-hint';this.root.hidden=true;
     this.root.setAttribute('aria-live','polite');
@@ -13,8 +13,8 @@ export default class Onboarding {
     const control=document.createElement('div');control.className='tutorial-settings';
     control.innerHTML='<button type="button">Reset tutorial hints</button><small role="status"></small>';
     control.querySelector('button').addEventListener('click',()=>{
-      this.completed.clear();this.resetRun();if(!this.readOnly)this.graphics.setTutorialHints([]);
-      control.querySelector('small').textContent=this.readOnly?'Hints reset for this debug session.':'Hints reset.';
+      this.completed.clear();this.resetRun();this.graphics.setTutorialHints([]);
+      control.querySelector('small').textContent='Hints reset.';
     });
     document.querySelector('.menu-settings').append(control);
   }
@@ -23,7 +23,7 @@ export default class Onboarding {
     if(this.completed.has(id))return;
     this.completed.add(id);this.queue=this.queue.filter(entry=>entry!==id);
     if(this.current===id){this.current=null;this.root.hidden=true;this.worldVisible=false;}
-    if(!this.readOnly)this.graphics.setTutorialHints(this.completed);
+    this.graphics.setTutorialHints(this.completed);
   }
   present(id){
     this.current=id;this.visibleTime=0;this.worldVisible=true;

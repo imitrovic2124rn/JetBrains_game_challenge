@@ -54,7 +54,7 @@ export default class Hud {
     this.banner.hidden = false; this.banner.style.opacity = '0';
   }
   update(dt, stats, score, difficulty, enemyCount, attack, biome, airdrops, waves) {
-    this.fields['still-human'].textContent=this.achievements?.readOnly?'Unavailable (debug)':stats.stillHumanEligible?'Eligible':'Lost this run';
+    this.fields['still-human'].textContent=stats.stillHumanEligible?'Eligible':'Lost this run';
     this.fields['still-human'].title=`Extract without ever reaching ${CONFIG.contamination.stillHumanThreshold} contamination.`;
     const mod=attack.getMod();this.modElement.hidden=!mod;
     if(this.modElement.textContent!==(mod?.name??''))this.modElement.textContent=mod?.name??'';

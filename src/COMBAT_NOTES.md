@@ -133,7 +133,6 @@ Contextual hints use the existing version-1 graphics/settings record's optional
 persist. Settings → Reset tutorial hints clears that field while preserving other
 settings. One hint is visible at a time; boss, extraction and mission messages
 defer it. The first mod hint reuses the same hint component inside the choice.
-Debug sessions keep hint completion in memory and cannot write real progress.
 
 Filter capacity and loot use `CONFIG.contamination.filter`. Capacity starts at
 100, Extended Filter adds 25 capacity and 25 charge, and the run cap is 200.
@@ -156,8 +155,8 @@ Still Human requires successful extraction with peak contamination strictly belo
 25. Every contamination write records the run peak, including abrupt gains; decay
 does not undo it. Expanded HUD shows eligibility. Mutation choices are unchanged.
 The version-3 achievement record retains earned flags/unlocks, including legacy
-Still Human records; the current run peak is never persisted. Debug runs remain
-read-only. Restart resets capacity, contamination history and electrical status.
+Still Human records; the current run peak is never persisted.
+Restart resets capacity, contamination history and electrical status.
 
 Electrical boxes and player stun grenades share `Player.stunFromArea` and the
 `PlayerStats.stunElectrical` timer. `CONFIG.player.electricalStun` owns the 0.75 s
@@ -174,6 +173,3 @@ automatic container openings are blocked; menu controls remain available.
 Recovery immunity and all status timers use simulation time and freeze in menus.
 The player ring/bolts are shared visual resources and reset with the existing mask
 effects; there is no screen flash or extra animation loop.
-
-No new debug loot or mod-spawning action is exposed. Existing development tools
-remain gated by development mode plus `?debug=1`, with progress persistence off.

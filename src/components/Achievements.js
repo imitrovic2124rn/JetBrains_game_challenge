@@ -6,9 +6,8 @@ const records = (value, allowed) => Array.isArray(value)
   ? [...new Set(value.filter(entry => typeof entry === 'string' && allowed.includes(entry)))] : [];
 
 export default class Achievements {
-  constructor({ onPanelChange = () => {}, readOnly = false } = {}) {
+  constructor({ onPanelChange = () => {} } = {}) {
     this.onPanelChange = onPanelChange;
-    this.readOnly=readOnly;
     this.types = Object.keys(CONFIG.enemies.roles).filter(type=>!CONFIG.enemies.roles[type].boss);
     this.biomeIds = CONFIG.biomes.regions.map(biome => biome.id);
     this.definitions = [
@@ -106,7 +105,6 @@ export default class Achievements {
     }
   }
   save() {
-    if(this.readOnly)return;
     try {
       localStorage.setItem(SETTINGS.saveKey, JSON.stringify({ version: SETTINGS.saveVersion, progress: this.data }));
       this.storageUnavailable = false;
@@ -140,14 +138,13 @@ export default class Achievements {
       row.progress.value = value; row.counter.textContent = `${value.toLocaleString('en-US')} / ${definition.goal.toLocaleString('en-US')}`;
     }
     this.summary.textContent = `${this.data.unlocked.length} / ${this.definitions.length} unlocked`;
-    this.saveNote.textContent = this.readOnly ? 'Debug run — achievements and progress are not recorded.' : this.storageUnavailable
+    this.saveNote.textContent = this.storageUnavailable
       ? 'Storage unavailable. Progress is kept for this session only.'
       : 'Progress is saved on this device.';
     this.button.querySelector('span').textContent = `${this.data.unlocked.length}/${this.definitions.length}`;
     this.renderDirty = false;
   }
   check() {
-    if(this.readOnly)return;
     const earned = this.definitions.filter(definition => !this.data.unlocked.includes(definition.id)
       && definition.progress(this.data) >= definition.goal);
     for (const definition of earned) this.data.unlocked.push(definition.id);
@@ -157,35 +154,29 @@ export default class Achievements {
     this.queue.push(...earned);
   }
   restoreQueue() {
-    if(this.readOnly){this.queue=[];return;}
     this.queue = this.definitions.filter(definition => this.data.unlocked.includes(definition.id)
       && !this.data.notified.includes(definition.id));
   }
   recordKill(type) {
-    if(this.readOnly)return;
     if (!Object.hasOwn(CONFIG.enemies.roles,type)) return;
     this.data.kills = Math.min(1e12, this.data.kills + 1);
     if (this.types.includes(type)&&!this.data.archetypes.includes(type)) this.data.archetypes.push(type);
     this.check();
   }
   recordAirdrop() {
-    // Called once by an actually opened crate, never by arrivals or debug pickups.
-    const guaranteed=!this.readOnly && this.data.airdropsWithoutRed3>=CONFIG.airdrops.red3GuaranteeAfter-1;
+    // Called once by an actually opened crate, never by arrivals or ordinary pickups.
+    const guaranteed=this.data.airdropsWithoutRed3>=CONFIG.airdrops.red3GuaranteeAfter-1;
     const category=guaranteed?'red3':rollAirdropReward();
-    if(!this.readOnly) {
-      this.data.airdrops=Math.min(1e12,this.data.airdrops+1);
-      this.data.airdropsWithoutRed3=category==='red3'?0:this.data.airdropsWithoutRed3+1;
-      this.check();if(this.saveDirty)this.save();
-    }
+    this.data.airdrops=Math.min(1e12,this.data.airdrops+1);
+    this.data.airdropsWithoutRed3=category==='red3'?0:this.data.airdropsWithoutRed3+1;
+    this.check();if(this.saveDirty)this.save();
     return category;
   }
   recordExpedition(event){
-    if(this.readOnly)return;
     const key=event==='components'?'missionComponents':event==='warden'?'warden':null;
     if(key&&!this.data[key]){this.data[key]=true;this.check();}
   }
   recordExtraction(variant,stats){
-    if(this.readOnly)return;
     if(!['stable','altered'].includes(variant))return;
     this.data[variant==='stable'?'stableExtraction':'alteredExtraction']=true;
     // Existing earned flags remain valid; new awards use the whole run's exposure history.
@@ -193,27 +184,22 @@ export default class Achievements {
     this.check();
   }
   discoverBiome(id) {
-    if(this.readOnly)return;
     if (!this.biomeIds.includes(id) || this.data.biomes.includes(id)) return;
     this.data.biomes.push(id); this.check();
   }
   recordWave(number) {
-    if(this.readOnly)return;
     const completed = count(number);
     if (completed <= this.data.highestWave) return;
     this.data.highestWave = completed; this.check();
   }
-  recordRed3() { if (!this.readOnly && !this.data.red3) { this.data.red3 = true; this.check(); } }
+  recordRed3() { if (!this.data.red3) { this.data.red3 = true; this.check(); } }
   recordOverload() {
-    if(this.readOnly)return;
     if (!this.data.overloadActivated) { this.data.overloadActivated = true; this.check(); }
   }
   recordMutations(selectedCount) {
-    if(this.readOnly)return;
     if (selectedCount >= 3 && !this.data.threeMutations) { this.data.threeMutations = true; this.check(); }
   }
   recordPlant(choice) {
-    if(this.readOnly)return;
     const key = choice === 'purify' ? 'plantPurified' : choice === 'overload' ? 'plantOverloaded' : null;
     if (key && !this.data[key]) { this.data[key] = true; this.check(); }
   }
@@ -234,7 +220,6 @@ export default class Achievements {
     this.setOpen(false);
   }
   update(dt) {
-    if(this.readOnly)return;
     this.flushElapsed += dt;
     if (this.flushElapsed >= SETTINGS.saveInterval) {
       this.flushElapsed %= SETTINGS.saveInterval;

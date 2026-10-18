@@ -161,7 +161,6 @@ src/
   config.js             Shared gameplay configuration
   *Config.js            World, enemies, expedition, presentation, and audio settings
   components/           Gameplay, rendering, UI, audio, and world systems
-  debug/                Development-only tools
 index.html              Application shell and UI markup
 package.json            Dependencies and npm scripts
 package-lock.json       Locked dependency versions
@@ -181,8 +180,6 @@ Useful configuration entry points:
 | `src/visualConfig.js` | Animation and graphics configuration |
 | `src/presentationConfig.js` | HUD, minimap, and achievement presentation |
 | `src/audioConfig.js` | Procedural audio and mixing |
-
-Development tools are gated by the development environment and an explicit debug flag. Debug runs do not record normal progression. Use the production build for the regular player-facing experience.
 
 ## Course foundation and original extension
 
