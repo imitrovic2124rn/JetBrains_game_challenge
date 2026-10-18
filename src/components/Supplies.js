@@ -45,7 +45,7 @@ export default class Supplies {
     item.site.used=!available;
   }
   dispense(item, player) {
-    if(item.state!=='available')return;
+    if(item.state!=='available'||player.stats.stunned)return;
     // Opening consumes this stock immediately; pickup collection never controls restocking.
     item.state='restocking';item.readyAt=this.time+CONFIG.supplies.restockDelay;
     this.restocking.add(item);

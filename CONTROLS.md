@@ -10,6 +10,7 @@ From this directory, run `npm.cmd run dev -- --host 127.0.0.1` and open the addr
 | Right mouse | Heavy overhead strike with Relay Breaker |
 | Tab | Hold to choose a weapon. Release to equip. |
 | R | Reload. Empty weapons reload automatically. |
+| G | Throw a stun grenade. Close blasts stun you too; solid cover protects you. |
 | Caps Lock | Show or hide extra HUD details |
 | Esc / P | Pause |
 | 1 / 2 / 3 | Filter / Hunter / Overload mask |

@@ -385,20 +385,20 @@ export default class Map extends THREE.Group {
     const target=obstacleHit(from.x,from.y,dx,dy,0,object);
     return this.firstHit(from.x,from.y,dx,dy,0)>=target-1e-5;
   }
-  canMove(actor, x, y) {
+  canMove(actor, x, y, ignoredObject = null) {
     const limit = MAP_SIZE / 2 - CONFIG.world.boundaryInset - actor.collisionRadius;
     if (Math.abs(x) > limit || Math.abs(y) > limit) return false;
     const distance = Math.hypot(x - actor.position.x, y - actor.position.y);
     this.grid.query((x + actor.position.x) / 2, (y + actor.position.y) / 2, distance / 2 + actor.collisionRadius + 1, this.nearby);
-    return canMove(actor, x, y, this.nearby);
+    return canMove(actor, x, y, this.nearby, ignoredObject);
   }
   moveActor(actor, dx, dy, out) {
     this.grid.query(actor.position.x, actor.position.y, Math.hypot(dx, dy) + actor.collisionRadius + 1, this.nearby);
     return slideCircle(actor, dx, dy, this.nearby, MAP_SIZE / 2 - CONFIG.world.boundaryInset - actor.collisionRadius, out);
   }
-  clearSegment(from, to, radius) {
+  clearSegment(from, to, radius, ignoredObject = null) {
     this.segmentActor.position.x = from.x; this.segmentActor.position.y = from.y; this.segmentActor.collisionRadius = radius;
-    return this.canMove(this.segmentActor, to.x, to.y);
+    return this.canMove(this.segmentActor, to.x, to.y, ignoredObject);
   }
   updateVisibility(position) {
     if (this.lastCull.distanceToSquared(position) > 70 * 70) {

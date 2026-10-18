@@ -3,7 +3,7 @@ const bindings = [
   ['RMB', 'Heavy overhead strike — melee only'],
   ['TAB', 'Hold to choose a weapon. Release to equip.'],
   ['R', 'Reload. Empty weapons reload automatically.'],
-  ['G', 'Throw a stun grenade toward the cursor. Enemies only.'],
+  ['G', 'Throw a stun grenade. Close blasts stun you too.'],
   ['CAPS LOCK', 'Show or hide extra HUD details'], ['ESC / P', 'Pause'],
   ['1 / 2 / 3', 'Filter / Hunter / Overload mask'], ['SHIFT', 'Dash — unlock with Phase Step'],
   ['E', 'Interact'], ['M', 'View mutations'], ['J', 'Achievements'],

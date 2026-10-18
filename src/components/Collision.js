@@ -152,10 +152,10 @@ export function obstacleHit(x, y, dx, dy, radius, obstacle, out = hit) {
   return first;
 }
 
-export function canMove(character, nextX, nextY, others) {
+export function canMove(character, nextX, nextY, others, ignoredObject = null) {
   const { x, y } = character.position, dx = nextX - x, dy = nextY - y;
   for (const other of others) {
-    if (other === character) continue;
+    if (other === character || other === ignoredObject) continue;
     if (obstacleHit(x, y, dx, dy, character.collisionRadius + MIN_COLLISION_DISTANCE, other) <= 1) return false;
   }
   return true;

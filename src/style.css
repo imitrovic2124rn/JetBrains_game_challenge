@@ -111,6 +111,7 @@ canvas.game.aim-active { cursor: crosshair; }
 .wheel-description small { color:#aaba98; font-size:calc(10px * var(--wheel-type-scale,1)); }
 .status-warning { margin-top:7px; padding:4px; font-size:10px; color:#efbc79; border-left:2px solid #c39357; }
 .hud[data-exposure="clear"] .status-warning { display:none; }
+.hud.player-stunned .status-warning { color:#d4eee7; border-left-color:#b2e1de; }
 .hud-compact .hud { width:244px; padding:12px; }
 .hud-compact .relay-brand { font-size:16px; letter-spacing:2px; }
 .hud-compact .terminal-line,.hud-compact .hud-details,.hud-compact .hud .controls,.hud-compact .hud-actions,

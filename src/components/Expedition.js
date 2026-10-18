@@ -324,7 +324,7 @@ export default class Expedition {
     }
     if(this.state==='TOWER_READY'&&this.nearby(sites.tower.interaction))this.prompt={text:'Send extraction signal',action:()=>this.ui.confirm('Send extraction signal?',`Defend the tower for ${this.settings.extraction.duration} seconds, then stay in the extraction zone for ${this.settings.extraction.holdDuration} seconds. At ${this.settings.extraction.stableContaminationThreshold} contamination or above, expect an altered extraction. You can come back later.`,'Send extraction signal',()=>this.beginDefense())};
   }
-  interact(){this.findPrompt();if(!this.prompt)return false;this.prompt.action?.();return true;}
+  interact(){if(this.player.stats.stunned)return false;this.findPrompt();if(!this.prompt)return false;this.prompt.action?.();return true;}
   onRetired(enemy){if(enemy===this.boss&&this.bossStatus==='active')this.bossStatus='cooldown';}
   stop(){
     this.stopped=true;if(this.tower)this.tower.active=false;if(this.generator)this.generator.target.active=false;

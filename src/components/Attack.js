@@ -122,7 +122,7 @@ export default class Attack {
     return this.inventory[this.weapon]?.magazine===0 && this.requestReload();
   }
   equip(id, force=false) {
-    if (!this.owns(id)) return false;
+    if (!this.owns(id) || this.player.stats.stunned) return false;
     if (!force && id===this.weapon) { this.pendingWeapon=null;this.autoReload();return true; }
     // Finish the committed melee strike before changing its weapon or heading.
     if (this.swing && !force) { this.pendingWeapon = id; return true; }

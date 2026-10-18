@@ -12,7 +12,7 @@ export default class Destructibles {
   constructor({scene,map,player,grid,projectiles,hazards,mission,supplies,lung,onDeath,onSound}){
     Object.assign(this,{scene,map,player,grid,projectiles,hazards,mission,supplies,lung,onDeath,onSound});
     this.items=[];this.nearby=[];this.victims=[];
-    this.point=new THREE.Vector3();this.time=0;this.placementInfo=null;
+    this.point=new THREE.Vector3();this.dischargeOrigin=new THREE.Vector3();this.time=0;this.placementInfo=null;
     this.outlineRay=new THREE.Raycaster();this.outlineHits=[];this.aimHits=[];
     this.cameraPosition=new THREE.Vector3();this.outlineTarget=new THREE.Vector3();this.outlineDirection=new THREE.Vector3();
   }
@@ -76,8 +76,10 @@ export default class Destructibles {
   }
   detonate(item){
     if(item.destroyed)return;
-    const cfg=CONFIG.combat.environment,spec=cfg[item.kind],center=item.position;
+    const cfg=CONFIG.combat.environment,spec=cfg[item.kind],center=this.dischargeOrigin.copy(item.position);
     item.destroyed=item.dead=true;item.marker.visible=false;item.object.outline.visible=false;item.object.userData.damageable=false;
+    // Resolve against the intact source's stable position, excluding only its own collider.
+    if(item.kind==='electric')this.player.stunFromArea(center,spec.blastRadius,this.map,item.object);
     this.map.removeSolids([item.object]);
     this.invalidateNavigation();
     if(item.kind==='chemical'){
@@ -97,8 +99,6 @@ export default class Destructibles {
       else if(enemy.takeDamage(spec.enemyDamage*(1-.8*d/spec.blastRadius),center,false,
         {environment:true,damageType:spec.damageType}))this.onDeath(enemy,{playerTriggered:item.playerTriggered});
     }
-    if(item.kind==='electric'&&Math.hypot(this.player.position.x-center.x,this.player.position.y-center.y)<=spec.blastRadius
-      &&this.map.clearSegment(center,this.player.position,0))this.player.stats.stunElectrical();
     if(item.kind==='fuel'){
       const t=Math.min(1,Math.hypot(this.player.position.x-center.x,this.player.position.y-center.y)/spec.blastRadius);
       if(t<1&&this.map.clearSegment(center,this.player.position,0))this.player.stats.takeDamage(spec.playerDamage*(1-t)**2*(1+2*t),spec.damageType);

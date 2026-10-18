@@ -32,7 +32,7 @@ export default class Hud {
   }
   reset() {
     this.setExpanded(false);
-    this.root.classList.remove('overdrive-active');
+    this.root.classList.remove('overdrive-active','player-stunned');
     this.messages.length = 0; this.messageElement.hidden = true; this.messageElement.textContent = ''; this.previous = '';
     this.bannerTime = 0; this.banner.hidden = true;
     this.waveNoticeTime = 0; this.waveNotice.hidden = true;
@@ -90,7 +90,7 @@ export default class Hud {
     const damage = Math.round((stats.attackDamage / stats.base.damage - 1) * 100);
     const speed = Math.round(((stats.unimpededMovementFactor ?? (1 + stats.speedBonus)) - 1) * 100), overdrive = Math.ceil(stats.overdrive);
     const armorCap = stats.armorCap ?? CONFIG.player.armorCap;
-    const status = [stats.stunned?`Stunned ${stats.electricalStun.toFixed(1)}s`:'',stats.poison > 0 ? `Poisoned ${Math.ceil(stats.poison)}s` : '', stats.slow > 0 ? `Slowed ${Math.ceil(stats.slow)}s` : ''].filter(Boolean).join(' / ') || 'Clear';
+    const status = [stats.stunned?'Stunned':'',stats.poison > 0 ? `Poisoned ${Math.ceil(stats.poison)}s` : '', stats.slow > 0 ? `Slowed ${Math.ceil(stats.slow)}s` : ''].filter(Boolean).join(' / ') || 'Clear';
     const delivery = airdrops.items.length >= CONFIG.airdrops.limit ? 'Waiting' : `${Math.ceil(airdrops.timer)}s`;
     const wave = waves?.number ?? 1, remaining = waves?.remaining ?? enemyCount;
     const waveStatus = waves?.recovery > 0 ? `Next wave in ${Math.ceil(waves.recovery)}s` : 'Wave in progress';
@@ -99,6 +99,7 @@ export default class Hud {
     this.previous = signature;
     this.root.classList.toggle('critical', stats.health / stats.maxHealth <= 0.25);
     this.root.classList.toggle('overdrive-active', overdrive > 0);
+    this.root.classList.toggle('player-stunned',stats.stunned);
     this.fields.health.textContent = `${Math.ceil(stats.health)} / ${Math.round(stats.maxHealth)}`;
     this.fields.armor.textContent = `${Math.ceil(stats.armor)} / ${Math.round(armorCap)}`;
     this.fields.damage.textContent = `+${damage}%`;

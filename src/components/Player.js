@@ -112,6 +112,15 @@ export default class Player extends THREE.Group {
     this.movement.complete = true; this.inputQueue.length = 0;
     return true;
   }
+  stunFromArea(center,radius,map,source=null) {
+    // Both electrical sources use the live detonation point and the same defenses-free status.
+    if(this.stats.health<=0||this.stats.stunned||this.stats.electricalImmunity>0)return false;
+    // Match enemy blast checks: any part of the physical body can enter the same radius.
+    const distance=Math.max(0,Math.hypot(this.position.x-center.x,this.position.y-center.y)-this.collisionRadius);
+    if(distance>radius
+      ||!map.clearSegment(center,this.position,0,source))return false;
+    return this.stats.stunElectrical();
+  }
   moveStep(dx, dy, enemies, onCollision, map) {
     map.moveActor(this, dx, dy, this.slidePosition);
     if (!canMove(this, this.slidePosition.x, this.slidePosition.y, enemies)) {

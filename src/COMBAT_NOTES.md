@@ -159,9 +159,18 @@ The version-3 achievement record retains earned flags/unlocks, including legacy
 Still Human records; the current run peak is never persisted. Debug runs remain
 read-only. Restart resets capacity, contamination history and electrical status.
 
+Electrical boxes and player stun grenades share `Player.stunFromArea` and the
+`PlayerStats.stunElectrical` timer. `CONFIG.player.electricalStun` owns the 0.75 s
+duration and 3 s immunity AFTER recovery. Neither source deals player damage;
+armor, Filter and toxic defenses never participate. The box resolves player
+exposure before removal, ignoring only its own collider; other solid cover still
+blocks it. Grenades use their live detonation point and unchanged enemy radius.
+Both player and enemy checks include their physical collision radius, so a body
+inside the visible boundary is affected even when its centre is just outside.
 Electrical stun interrupts uncommitted swings and clears held attack input while
 preserving cooldowns, reloads and fired projectiles. Movement pauses without losing
-held directions. Dash and throws are blocked; menu controls remain available.
+held directions. Dash, throws, weapon switches, mission/plant interactions and
+automatic container openings are blocked; menu controls remain available.
 Recovery immunity and all status timers use simulation time and freeze in menus.
 The player ring/bolts are shared visual resources and reset with the existing mask
 effects; there is no screen flash or extra animation loop.

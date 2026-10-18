@@ -17,9 +17,10 @@ const openingGeometry=new THREE.BufferGeometry().setFromPoints([
 const traceMaterial = new THREE.MeshBasicMaterial({ color: 0x93bea4, depthTest: false, transparent: true, opacity: .34, depthWrite: false });
 const scentMaterial = new THREE.MeshBasicMaterial({ color: 0x8ec9b2, transparent: true, opacity: .4, depthWrite: false });
 const electricalMaterial=new THREE.MeshBasicMaterial({color:0xb2e1de,transparent:true,opacity:.78,depthWrite:false});
+// Billboard vertices belong in camera-local XY; Z would collapse their height into depth.
 const electricalLines=new THREE.BufferGeometry().setFromPoints([
-  [-6,0,5],[-2,0,1],[-2,0,1],[-5,0,0],[-5,0,0],[-1,0,-5],
-  [6,0,5],[2,0,1],[2,0,1],[5,0,0],[5,0,0],[1,0,-5],
+  [-6,5,0],[-2,1,0],[-2,1,0],[-5,0,0],[-5,0,0],[-1,-5,0],
+  [6,5,0],[2,1,0],[2,1,0],[5,0,0],[5,0,0],[1,-5,0],
 ].map(point=>new THREE.Vector3(...point)));
 const electricalLineMaterial=new THREE.LineBasicMaterial({color:0xc0e6e1,transparent:true,opacity:.9});
 const modeMaterials = Object.fromEntries(Object.entries({ filter: 0x91c8c1, hunter: 0xc6ba79, overload: 0xe59560 }).map(([id,color]) =>
@@ -69,6 +70,7 @@ export default class MaskEffects {
     const stats = this.player.stats, cfg = CONFIG.contamination.hunter;
     this.elapsed += dt; this.traceTimer -= dt; this.scentTimer -= dt;
     this.stunMarker.visible=stats.stunned&&stats.health>0;
+    this.stunMarker.position.z=this.player.animator.groundHeight;
     this.stunBolts.quaternion.copy(camera.quaternion);
     this.stunMarker.children[0].rotation.z+=dt*2;
     this.modeRing.material = modeMaterials[stats.mode];

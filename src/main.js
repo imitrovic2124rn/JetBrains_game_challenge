@@ -109,7 +109,7 @@ wheel = new WeaponWheel(attack, {
 const onboarding=new Onboarding({graphics,readOnly:debugRun,onInteract:releaseAttackInput,
   onDismiss:()=>{if(gameplayInput())renderer.domElement.focus({preventScroll:true});}});
 const weaponMods=new WeaponMods({attack,pickups,setPause,
-  canPresent:()=>gameplayInput()&&!wheel.opened&&!mechanicUI.reason&&!mission.ui.open&&!achievements.isOpen&&!menus.isOpen,
+  canPresent:()=>gameplayInput()&&!player.stats.stunned&&!wheel.opened&&!mechanicUI.reason&&!mission.ui.open&&!achievements.isOpen&&!menus.isOpen,
   onMessage:pickupMessage,onOpen:host=>{onboarding.offer('mods');if(!onboarding.deferred(mission,hud))onboarding.attachToModPanel(host);},onResolved:()=>onboarding.complete('mods'),
   onClose:()=>{onboarding.detachModal();if(!pauseReasons.size&&run.state==='playing')renderer.domElement.focus({preventScroll:true});}});
 const environment=new Destructibles({scene,map,player,grid,projectiles,hazards,mission,supplies,lung,onDeath:onEnemyDeath,
@@ -131,7 +131,11 @@ const worldSound=(kind,position)=>audio.play(kind,position);
 attack.onSound=projectiles.onSound=hazards.onSound=airdrops.onSound=worldSound;
 pickups.onPickup=(type,position)=>audio.pickup(type,position);
 player.stats.onDamage=hit=>audio.play(hit.health>0?'playerDamage':'playerArmor');
-player.stats.onElectricalStun=()=>{wheel.cancel();releaseAttackInput();player.dash=null;attack.interruptForStun();audio.cue('warning');};
+player.stats.onElectricalStun=()=>{
+  wheel.cancel();releaseAttackInput();player.dash=null;
+  player.movement.complete=true;player.inputQueue.length=0;
+  attack.interruptForStun();audio.cue('warning');
+};
 hud.onAnnouncement=kind=>audio.play(kind);
 achievements.onNotify=()=>audio.play('achievement',null,{ui:true});
 document.querySelector('.defeat-menu').addEventListener('click', returnToMain);
@@ -334,7 +338,7 @@ window.addEventListener('keydown', event => {
   if (event.code === 'Space' && event.target.closest('button, a, summary')) return;
   if (event.code === 'Tab' && gameplayInput()
     && (document.activeElement === renderer.domElement || document.activeElement === document.body)) {
-    event.preventDefault(); if (!event.repeat) { audio.unlock(); wheel.open(); } return;
+    event.preventDefault(); if (!event.repeat && !player.stats.stunned) { audio.unlock(); wheel.open(); } return;
   }
   if (event.repeat || document.hidden) {
     if (gameplayInput() && (event.code === 'Space' || player.isMovementKey(event.code))) event.preventDefault();
@@ -353,17 +357,17 @@ window.addEventListener('keydown', event => {
   mechanicUI.handleKey(event); if (event.defaultPrevented) return;
   if (event.code === 'Space' || player.isMovementKey(event.code)) event.preventDefault();
   if (['Digit1','Digit2','Digit3'].includes(event.code)) { switchMask({Digit1:'filter',Digit2:'hunter',Digit3:'overload'}[event.code]); return; }
+  if(player.stats.stunned){if(player.isMovementKey(event.code))player.queueInput(event.code);return;}
   if (event.code === 'KeyE') { if(!mission.interact())mechanicUI.showPlant(); return; }
   if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
     if (player.startDash()) { maskEffects.addTrace(player.position.x,player.position.y,player.model.rotation.z,true); audio.cue('meleeSwing'); }
     return;
   }
-  if(player.stats.stunned){if(player.isMovementKey(event.code))player.queueInput(event.code);return;}
   if (event.code === 'Space') { if (!wheel.opened) { attackRequested = true; spaceHeld = true; } } else player.queueInput(event.code);
 });
 window.addEventListener('keyup', event => {
   if (event.code === 'Tab' && wheel.opened) {
-    event.preventDefault(); wheel.close(gameplayInput() && !editable(event.target));
+    event.preventDefault(); wheel.close(gameplayInput() && !player.stats.stunned && !editable(event.target));
   }
   if (event.code === 'Space') spaceHeld = false;
   if (player.releaseInput(event.code) && gameplayInput() && !editable(event.target)) event.preventDefault();

@@ -69,6 +69,7 @@ export default class Projectiles {
     if(p.detonated)return;
     p.detonated=true;p.cancelled=true;p.mesh.visible=false;
     const center=p.mesh.position,radius=p.blastRadius;
+    if(p.kind==='stun')player.stunFromArea(center,radius,map);
     this.onSound?.(p.kind==='stun'?'stunBlast':'explosion',center);
     this.blastPosition.set(center.x,center.y,map.visualGroundAt(center.x,center.y)+1.3);
     this.combatEffects.blast(this.blastPosition,radius,p.kind==='stun',p.encounterOwner);

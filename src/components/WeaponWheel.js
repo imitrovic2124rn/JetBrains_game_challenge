@@ -49,7 +49,7 @@ export default class WeaponWheel {
     this.disc.style.setProperty('--wheel-type-scale',String(Math.max(1,330/size)));
   }
   open() {
-    if (this.opened) return;
+    if (this.opened || this.weapons.player.stats.stunned) return;
     this.highlight = null; this.opened = this.weapons.selectionOpen = true;
     document.body.classList.add('choosing-weapon');
     this.root.hidden = false; this.resize(); this.onOpen(); this.update();

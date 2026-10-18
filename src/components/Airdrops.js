@@ -64,7 +64,7 @@ export default class Airdrops {
     return true;
   }
   grant(item, player, map) {
-    if(item.claimed)return false;
+    if(item.claimed||player.stats.stunned)return false;
     item.claimed=true;item.category=this.determineReward();this.onOpened();
     const cfg = CONFIG.airdrops, position = item.group.position;
     if (item.category === 'weapon') {
@@ -138,7 +138,7 @@ export default class Airdrops {
       } else item.unopened += dt;
       item.marker.scale.setScalar(1 + Math.sin(item.age * 3) * 0.06);
       item.beam.scale.x = item.beam.scale.y = 1 + Math.sin(item.age * 2) * 0.15;
-      const close = item.landed && item.group.position.distanceTo(player.position) <= cfg.collectRadius
+      const close = !player.stats.stunned && item.landed && item.group.position.distanceTo(player.position) <= cfg.collectRadius
         && map.clearSegment(player.position, item.group.position, 0);
       if (close || item.unopened >= cfg.expiry) {
         // Remove first: the reward can never be granted a second time.

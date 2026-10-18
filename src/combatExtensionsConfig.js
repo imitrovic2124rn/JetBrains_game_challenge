@@ -57,7 +57,7 @@ export const COMBAT_EXTENSIONS = {
     warningTime:.45, chainDelay:.24, maximumChainDepth:4, detonationsPerUpdate:2,
     revealRadius:170, healthBarTime:2,
     fuel:{name:'Fuel barrel',health:90,radius:7,blastRadius:62,enemyDamage:140,playerDamage:40,damageType:'fire'},
-    electric:{name:'Power box',health:75,radius:8,blastRadius:44,playerStun:.75,playerImmunity:3},
+    electric:{name:'Power box',health:75,radius:8,blastRadius:44},
     chemical:{name:'Chemical tank',health:120,radius:11,blastRadius:43,duration:7,damage:7,delay:.55},
   },
   onboarding: { pollInterval:.25, readTime:2.5, exposureTime:1, enemyRange:170,

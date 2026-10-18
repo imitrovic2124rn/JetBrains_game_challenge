@@ -160,7 +160,8 @@ export default class PlayerStats {
 
   stunElectrical() {
     if(this.health<=0||this.stunned||this.electricalImmunity>0)return false;
-    this.electricalStun=CONFIG.combat.environment.electric.playerStun;
+    this.electricalStun=CONFIG.player.electricalStun.duration;
+    this.controlTime=0;
     this.onElectricalStun?.();return true;
   }
 
@@ -195,7 +196,7 @@ export default class PlayerStats {
     const blocked=Math.min(dt,this.electricalStun);
     this.electricalStun=Math.max(0,this.electricalStun-blocked);
     if(blocked>0&&this.electricalStun<1e-8){
-      this.electricalStun=0;this.electricalImmunity=CONFIG.combat.environment.electric.playerImmunity;
+      this.electricalStun=0;this.electricalImmunity=CONFIG.player.electricalStun.recoveryImmunity;
     }
     this.controlTime=dt-blocked;
     this.electricalImmunity=Math.max(0,this.electricalImmunity-this.controlTime);
