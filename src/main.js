@@ -293,10 +293,12 @@ function restart() {
   updateHud(0); minimap.update(CONFIG.ui.minimapInterval, player, biomes.current, airdrops); map.updateOcclusion(camera, player);
   mechanicUI.update(0,player.stats,lung,player); audio.pause(pauseReasons.size > 0);clock.getDelta();
 }
-Promise.all([map.ready, supplies.ready, player.ready, Enemy.load(), lung.ready,mission.ready]).then(() => {
+export const ready = Promise.all([map.ready, supplies.ready, player.ready, Enemy.load(), lung.ready,mission.ready]).then(() => {
+  // Prepare the first world frame while the independent startup screen is visible.
+  renderer.render(scene, camera);
   run.state = 'menu'; menus.setReady();
 }).catch(error => {
-  run.state = 'error'; console.error('Unable to load the game:', error); menus.setReady(true);
+  run.state = 'error'; menus.setReady(true); throw error;
 });
 
 const editable = target => target?.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target?.tagName);

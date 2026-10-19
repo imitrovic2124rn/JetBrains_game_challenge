@@ -1,13 +1,50 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-startup="loading">
   <head>
     <meta charset="UTF-8" />
     <meta name="theme-color" content="#30372c" />
     <link rel="icon" type="image/svg+xml" href="/relay-mark.svg" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Ash Relay — The Last Signal</title>
+    <style>
+      html, body { width:100%; height:100%; margin:0; overflow:hidden; background:#18231c; color:#d9d0b4; color-scheme:dark; font-family:Consolas,"Courier New",monospace; }
+      #game-root { position:fixed; inset:0; overflow:hidden; }
+      html:not([data-startup="ready"]) #game-root,
+      html:not([data-startup="ready"]) #game-root * { visibility:hidden !important; pointer-events:none !important; }
+      .game-in-menu .hud { visibility:hidden; }
+      #startup-screen { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:24px; box-sizing:border-box; background:#18231c; }
+      .startup-terminal { box-sizing:border-box; width:min(360px,100%); padding:28px; border:1px solid #72775a; border-top:3px solid #c1a268; background:#202d24; }
+      .startup-title { margin:0 0 18px; color:#e8d19d; font-size:clamp(24px,7vw,32px); font-weight:bold; letter-spacing:3px; }
+      #startup-status, .startup-failure p, .startup-noscript { margin:0; font-size:14px; line-height:1.6; }
+      .startup-failure { display:none; }
+      html[data-startup="error"] #startup-status { display:none; }
+      html[data-startup="error"] .startup-failure { display:block; }
+      #startup-retry { margin-top:20px; padding:10px 20px; border:1px solid #c1a268; background:#17291e; color:#e8d19d; font:inherit; cursor:pointer; }
+      #startup-retry:hover, #startup-retry:focus-visible { outline:2px solid #e8d19d; outline-offset:3px; }
+    </style>
+    <script>
+      // Keep Retry available even if the startup module itself cannot download.
+      window.addEventListener('error', function (event) {
+        if (event.target instanceof HTMLScriptElement && event.target.type === 'module'
+            && document.documentElement.dataset.startup === 'loading') {
+          document.documentElement.dataset.startup = 'error';
+        }
+      }, true);
+    </script>
   </head>
   <body class="game-in-menu hud-compact">
+    <div id="startup-screen">
+      <section class="startup-terminal" aria-labelledby="startup-title">
+        <h1 class="startup-title" id="startup-title">ASH RELAY</h1>
+        <p id="startup-status" role="status">Loading…</p>
+        <div class="startup-failure" role="alert">
+          <p>Unable to start the game. Please check your connection and try again.</p>
+          <button id="startup-retry" type="button" onclick="window.location.reload()">Retry</button>
+        </div>
+        <noscript><style>#startup-status { display:none; }</style><p class="startup-noscript">Enable JavaScript to play Ash Relay.</p></noscript>
+      </section>
+    </div>
+    <div id="game-root" inert aria-hidden="true" aria-busy="true">
    <canvas class="game" tabindex="0" aria-label="Wasteland gameplay. Aim with mouse, attack with left mouse or Space."></canvas>
     <div class="mask-vignette" aria-hidden="true"></div>
     <div class="ui-layer">
@@ -130,6 +167,7 @@
       </div>
     </div>
     </div>
-    <script type="module" src="/src/main.js"></script>
+    </div>
+    <script type="module" src="/src/startup.js"></script>
   </body>
 </html>
