@@ -1,7 +1,7 @@
 [README.md](https://github.com/user-attachments/files/33635956/README.md)
 # Ash Relay — The Last Signal
 
-A single-player, top-down 3D survival game set in an industrial wasteland. Explore four biomes, scavenge weapons and supplies, and rebuild a radio relay to call for extraction. Your mask can protect you, reveal enemy vulnerabilities, or turn contamination into combat power—but every choice changes how you survive.
+A single-player, arcade style top-down 3D survival game set in an industrial wasteland. Explore four biomes, scavenge weapons and supplies, and rebuild a radio relay to call for extraction. Your mask can protect you, reveal enemy vulnerabilities, or turn contamination into combat power—but every choice changes how you survive.
 
 Built with **JavaScript, Three.js, and Vite**, as an original extension of the JetBrains Academy **Build a Game with an AI Coding Agent** course project.
 
